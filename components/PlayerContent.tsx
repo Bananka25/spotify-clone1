@@ -7,6 +7,7 @@ import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import { useState } from "react";
 // import useSound from "use-sound";
 // import * as useSound from 'use-sound';
+import useSound from 'use-sound';
 
 import usePlayer from "@/hooks/usePlayer";
 
