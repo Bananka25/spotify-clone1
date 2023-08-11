@@ -4,9 +4,7 @@ import { Song } from "@/types";
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
 import { AiFillStepBackward, AiFillStepForward } from "react-icons/ai";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
-import { useState } from "react";
-// import useSound from "use-sound";
-// import * as useSound from 'use-sound';
+import { useEffect, useState } from "react";
 import useSound from 'use-sound';
 
 import usePlayer from "@/hooks/usePlayer";
@@ -62,8 +60,42 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   };
 
   const [play, { pause, sound }] = useSound (
-    songUrl
-  )
+    songUrl,
+    {
+      volume: volume,
+      onplay: () => setIsPlaying(true),
+      onend: () => {
+        setIsPlaying(false);
+        onPlayNext();
+      },
+      onpause: () => setIsPlaying(false),
+      fotmat: ['mp3']
+    }
+  );
+
+  useEffect(() => {
+    sound?.play();
+
+    return () => {
+      sound?.unload();
+    }
+  }, [sound]);
+
+  const handlePlay = () => {
+    if (!isPlaying) {
+      play();
+    } else {
+      pause();
+    }
+  };
+
+  const toggleMute = () => {
+    if (volume === 0) {
+      setVolume(1);
+    } else {
+      setVolume(0);
+    }
+  }
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 h-full">
@@ -89,7 +121,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         "
       >
         <div
-          onClick={() => {}}
+          onClick={handlePlay}
           className="
             h-10
             w-10
@@ -129,7 +161,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
           "
         />
         <div
-          onClick={() => {}}
+          onClick={handlePlay}
           className="
             flex
             items-center
@@ -159,11 +191,14 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       <div className="hidden md:flex w-full justify-end pr-2">
         <div className="flex items-center gap-x-2 w-[120px]">
           <VolumeIcon
-            onClick={() => {}}
+            onClick={toggleMute}
             className="cursor-pointer"
             size={34}
           />
-          <Slider/>
+          <Slider
+            value={volume}
+            onChange={(value) => setVolume(value)}
+          />
         </div>
       </div>
 
